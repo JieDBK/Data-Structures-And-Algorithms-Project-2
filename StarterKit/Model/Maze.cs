@@ -35,7 +35,24 @@ namespace Model
 
             //ToDo...
 
-            GenerateFromText(MazeGrids.mazeText); //remove this line and implement the task
+            // GenerateFromText(MazeGrids.mazeText); //remove this line and implement the task
+            int[][] jaggedMaze = new int[rows][];
+            for (int i = 0; i < jaggedMaze.Length; i++)
+            {
+                jaggedMaze[i] = new int[cols];
+                for (int j = 0; i < jaggedMaze[i].Length; i++)
+                {
+                    jaggedMaze[i][j] = -1;
+                }
+            }
+            int[,] mdMaze = new int[rows,cols];
+            for (int i = 0; i < mdMaze.GetLength(0); i++)
+            {
+                for (int j = 0; j < mdMaze.GetLength(1); j++)
+                {
+                    mdMaze[i,j] = -1;
+                }
+            }
         }
 
         int[][] ToMazeArray(string maze)
