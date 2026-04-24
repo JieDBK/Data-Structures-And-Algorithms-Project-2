@@ -5,6 +5,7 @@ namespace Model
 {
     public class Maze
     {
+        Random rng = new();
         public int[][] MazeArray { get; private set; }
         public int[,] MazeMDArray { get; private set; }
         public int[] Begin { get; private set; }
@@ -15,8 +16,14 @@ namespace Model
             new int[] { -1,  0 },  //up
             new int[] {  0, -1 },  //left
             new int[] {  0,  1 },  //right
-            };
+        };
         
+        private int[][] movesGen = {           
+            new int[] {  1,  0 },  //down
+            new int[] { -1,  0 },  //up
+            new int[] {  0, -1 },  //left
+            new int[] {  0,  1 },  //right
+        }; //for generating maze and im gonna randomize the list
         public Maze() => GenerateMaze();
         public Maze(bool automatic = true) {if(automatic) GenerateMaze(); else GenerateFromText(MazeGrids.mazeText);}
         public Maze(int rows, int cols) {if(rows <= 0 && cols <= 0) GenerateFromText(MazeGrids.mazeText); else GenerateMaze(rows, cols);}
@@ -35,7 +42,79 @@ namespace Model
 
             //ToDo...
 
-            GenerateFromText(MazeGrids.mazeText); //remove this line and implement the task
+            // GenerateFromText(MazeGrids.mazeText); //remove this line and implement the task
+            int[][] jaggedMaze = new int[rows][];
+            for (int i = 0; i < jaggedMaze.Length; i++)
+            {
+                jaggedMaze[i] = new int[cols];
+                for (int j = 0; j < jaggedMaze[i].Length; j++)
+                {
+                    jaggedMaze[i][j] = -1;
+                }
+            }
+
+            int[,] mdMaze = new int[rows,cols];
+            for (int i = 0; i < mdMaze.GetLength(0); i++)
+            {
+                for (int j = 0; j < mdMaze.GetLength(1); j++)
+                {
+                    mdMaze[i,j] = -1;
+                }
+            }
+
+            // int randomRow;
+            // int randomCol;  
+            // while (true)
+            // {
+            //     randomRow = rng.Next(1, rows);
+            //     randomCol = rng.Next(1, cols);
+            //     if (IsValidPos(jaggedMaze, randomRow, randomCol) && jaggedMaze[randomRow][randomCol] == -1)
+            //     {
+            //         break;
+            //     }
+            // }
+
+            Stack<int[]> backtrack = new();
+            jaggedMaze[1][1] = 0; 
+            mdMaze[1, 1] = 0;
+            backtrack.Push([1, 1]);
+            while (backtrack.Count > 0)
+            {
+                int[] currentCell = backtrack.Pop();
+                int currentRow = currentCell[0];
+                int currentCol = currentCell[1];
+                rng.Shuffle(movesGen);
+                foreach (int[] step in movesGen)
+                {
+                    int newRow = currentRow + (step[0] * 2); //step of 2
+                    int newCol = currentCol + (step[1] * 2);
+                    int betweenRow = currentRow + step[0];
+                    int betweenCol = currentCol + step[1];
+                    // if (step[0] == -1)
+                    if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
+                    {
+                        backtrack.Push(currentCell);
+                        jaggedMaze[newRow][newCol] = 0;
+                        mdMaze[newRow, newCol] = 0;
+                        jaggedMaze[betweenRow][betweenCol] = 0;
+                        mdMaze[betweenRow, betweenCol] = 0;
+                        backtrack.Push([newRow, newCol]);
+                        break;
+                    }
+                }
+            }
+
+            jaggedMaze[1][1] = 1; //start linksboven
+            jaggedMaze[rows - 1][cols - 1] = 2; //einde rechtsonder
+            mdMaze[1,1] = 1;
+            mdMaze[rows -2, cols - 2] = 2;
+
+            MazeArray = jaggedMaze;
+            MazeMDArray = mdMaze;
+            
+            Begin = [1,1];
+            End = [rows -2, cols - 2];
+            
         }
 
         int[][] ToMazeArray(string maze)
