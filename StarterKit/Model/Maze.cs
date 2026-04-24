@@ -5,6 +5,7 @@ namespace Model
 {
     public class Maze
     {
+        Random rng = new();
         public int[][] MazeArray { get; private set; }
         public int[,] MazeMDArray { get; private set; }
         public int[] Begin { get; private set; }
@@ -15,8 +16,14 @@ namespace Model
             new int[] { -1,  0 },  //up
             new int[] {  0, -1 },  //left
             new int[] {  0,  1 },  //right
-            };
+        };
         
+        private int[][] movesGen = {           
+            new int[] {  1,  0 },  //down
+            new int[] { -1,  0 },  //up
+            new int[] {  0, -1 },  //left
+            new int[] {  0,  1 },  //right
+        }; //for generating maze and im gonna randomize the list
         public Maze() => GenerateMaze();
         public Maze(bool automatic = true) {if(automatic) GenerateMaze(); else GenerateFromText(MazeGrids.mazeText);}
         public Maze(int rows, int cols) {if(rows <= 0 && cols <= 0) GenerateFromText(MazeGrids.mazeText); else GenerateMaze(rows, cols);}
@@ -40,11 +47,12 @@ namespace Model
             for (int i = 0; i < jaggedMaze.Length; i++)
             {
                 jaggedMaze[i] = new int[cols];
-                for (int j = 0; i < jaggedMaze[i].Length; i++)
+                for (int j = 0; j < jaggedMaze[i].Length; j++)
                 {
                     jaggedMaze[i][j] = -1;
                 }
             }
+
             int[,] mdMaze = new int[rows,cols];
             for (int i = 0; i < mdMaze.GetLength(0); i++)
             {
@@ -53,6 +61,45 @@ namespace Model
                     mdMaze[i,j] = -1;
                 }
             }
+
+            int randomRow = rng.Next(0, rows);
+            int randomCol = rng.Next(0, cols);
+            Stack<int[]> backtrack = new();
+            jaggedMaze[randomRow][randomCol] = 0; //random start waar word gegraven
+            mdMaze[randomRow, randomCol] = 0;
+            backtrack.Push([randomRow, randomCol]);
+            while (backtrack.Count > 0)
+            {
+                int[] currentCell = backtrack.Pop();
+                int currentRow = currentCell[0];
+                int currentCol = currentCell[1];
+                rng.Shuffle(movesGen);
+                foreach (int[] step in movesGen)
+                {
+                    int newRow = currentRow + step[0];
+                    int newCol = currentCol + step[0];
+                    if (IsValidPos(jaggedMaze, newRow, newCol))
+                    {
+                        backtrack.Push(currentCell);
+                        jaggedMaze[newRow][newCol] = 0;
+                        mdMaze[newRow, newCol] = 0;
+                        backtrack.Push([newRow, newCol]);
+                        break;
+                    }
+                }
+            }
+
+            jaggedMaze[1][1] = 1; //start linksboven
+            jaggedMaze[rows - 2][cols - 2] = -1; //einde rechtsonder
+            mdMaze[1,1] = 1;
+            mdMaze[rows -2, cols - 2] = -1;
+
+            MazeArray = jaggedMaze;
+            MazeMDArray = mdMaze;
+            
+            Begin = [1,1];
+            End = [rows -2, cols - 2];
+            
         }
 
         int[][] ToMazeArray(string maze)
