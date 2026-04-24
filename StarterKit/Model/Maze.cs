@@ -62,8 +62,18 @@ namespace Model
                 }
             }
 
-            int randomRow = rng.Next(0, rows);
-            int randomCol = rng.Next(0, cols);
+            int randomRow = rng.Next(1, rows);
+            int randomCol = rng.Next(1, cols);           
+            while (true)
+            {
+                randomRow = rng.Next(1, rows);
+                randomCol = rng.Next(1, cols);
+                if (IsValidPos(jaggedMaze, randomRow, randomCol) && jaggedMaze[randomRow][randomCol] == -1)
+                {
+                    break;
+                }
+            }
+
             Stack<int[]> backtrack = new();
             jaggedMaze[randomRow][randomCol] = 0; //random start waar word gegraven
             mdMaze[randomRow, randomCol] = 0;
@@ -77,8 +87,8 @@ namespace Model
                 foreach (int[] step in movesGen)
                 {
                     int newRow = currentRow + step[0];
-                    int newCol = currentCol + step[0];
-                    if (IsValidPos(jaggedMaze, newRow, newCol))
+                    int newCol = currentCol + step[1];
+                    if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1)
                     {
                         backtrack.Push(currentCell);
                         jaggedMaze[newRow][newCol] = 0;
@@ -90,9 +100,9 @@ namespace Model
             }
 
             jaggedMaze[1][1] = 1; //start linksboven
-            jaggedMaze[rows - 2][cols - 2] = -1; //einde rechtsonder
+            jaggedMaze[rows - 2][cols - 2] = 2; //einde rechtsonder
             mdMaze[1,1] = 1;
-            mdMaze[rows -2, cols - 2] = -1;
+            mdMaze[rows -2, cols - 2] = 2;
 
             MazeArray = jaggedMaze;
             MazeMDArray = mdMaze;
