@@ -62,22 +62,22 @@ namespace Model
                 }
             }
 
-            int randomRow;
-            int randomCol;  
-            while (true)
-            {
-                randomRow = rng.Next(1, rows);
-                randomCol = rng.Next(1, cols);
-                if (IsValidPos(jaggedMaze, randomRow, randomCol) && jaggedMaze[randomRow][randomCol] == -1)
-                {
-                    break;
-                }
-            }
+            // int randomRow;
+            // int randomCol;  
+            // while (true)
+            // {
+            //     randomRow = rng.Next(1, rows);
+            //     randomCol = rng.Next(1, cols);
+            //     if (IsValidPos(jaggedMaze, randomRow, randomCol) && jaggedMaze[randomRow][randomCol] == -1)
+            //     {
+            //         break;
+            //     }
+            // }
 
             Stack<int[]> backtrack = new();
-            jaggedMaze[randomRow][randomCol] = 0; //random start waar word gegraven
-            mdMaze[randomRow, randomCol] = 0;
-            backtrack.Push([randomRow, randomCol]);
+            jaggedMaze[1][1] = 0; 
+            mdMaze[1, 1] = 0;
+            backtrack.Push([1, 1]);
             while (backtrack.Count > 0)
             {
                 int[] currentCell = backtrack.Pop();
@@ -86,15 +86,18 @@ namespace Model
                 rng.Shuffle(movesGen);
                 foreach (int[] step in movesGen)
                 {
-                    int newRow = currentRow + step[0];
-                    int newCol = currentCol + step[1];
-
+                    int newRow = currentRow + (step[0] * 2); //step of 2
+                    int newCol = currentCol + (step[1] * 2);
+                    int betweenRow = currentRow + step[0];
+                    int betweenCol = currentCol + step[1];
                     // if (step[0] == -1)
-                    if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
+                    if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
                     {
                         backtrack.Push(currentCell);
                         jaggedMaze[newRow][newCol] = 0;
                         mdMaze[newRow, newCol] = 0;
+                        jaggedMaze[betweenRow][betweenCol] = 0;
+                        mdMaze[betweenRow, betweenCol] = 0;
                         backtrack.Push([newRow, newCol]);
                         break;
                     }
@@ -102,7 +105,7 @@ namespace Model
             }
 
             jaggedMaze[1][1] = 1; //start linksboven
-            jaggedMaze[rows - 2][cols - 2] = 2; //einde rechtsonder
+            jaggedMaze[rows - 1][cols - 1] = 2; //einde rechtsonder
             mdMaze[1,1] = 1;
             mdMaze[rows -2, cols - 2] = 2;
 
