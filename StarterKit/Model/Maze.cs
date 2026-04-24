@@ -62,8 +62,8 @@ namespace Model
                 }
             }
 
-            int randomRow = rng.Next(1, rows);
-            int randomCol = rng.Next(1, cols);           
+            int randomRow;
+            int randomCol;  
             while (true)
             {
                 randomRow = rng.Next(1, rows);
@@ -88,7 +88,9 @@ namespace Model
                 {
                     int newRow = currentRow + step[0];
                     int newCol = currentCol + step[1];
-                    if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1)
+
+                    // if (step[0] == -1)
+                    if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
                     {
                         backtrack.Push(currentCell);
                         jaggedMaze[newRow][newCol] = 0;
