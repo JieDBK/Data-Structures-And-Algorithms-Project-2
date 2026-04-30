@@ -104,16 +104,38 @@ namespace Model
                 }
             }
 
-            jaggedMaze[1][1] = 1; //start linksboven
-            jaggedMaze[rows - 1][cols - 1] = 2; //einde rechtsonder
-            mdMaze[1,1] = 1;
-            mdMaze[rows -2, cols - 2] = 2;
+            for (int i = 1; i < cols; i++)
+            {
+                if (jaggedMaze[1][i] == 0)
+                {
+                    jaggedMaze[1][i] = 1;
+                    mdMaze[1,i] = 1;
+                    Begin = [1,i];
+                    break;
+                }
+            }
+
+
+            for (int i = 1; i < cols; i++)
+            {
+                if (jaggedMaze[rows - i][cols - i] == 0)
+                {
+                    jaggedMaze[rows - i][cols - i] = 2;
+                    mdMaze[rows -i, cols - i] = 2;
+                    End = [rows -i, cols - i];
+                    break;
+                }
+            }
+            // jaggedMaze[1][1] = 1; //start linksboven
+            // jaggedMaze[rows - 1][cols - 1] = 2; //einde rechtsonder
+            // mdMaze[1,1] = 1;
+            // mdMaze[rows -2, cols - 2] = 2;
 
             MazeArray = jaggedMaze;
             MazeMDArray = mdMaze;
             
-            Begin = [1,1];
-            End = [rows -2, cols - 2];
+            // Begin = [1,1];
+            // End = [rows -2, cols - 2];
             
         }
 
