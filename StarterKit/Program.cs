@@ -45,9 +45,7 @@ xx            xx            xx.";
         //Maze maze = new Maze(-1, -1);
         //OR
         //Maze maze = new Maze(false);
-        System.Console.WriteLine("before");
         Maze maze = new Maze(rows, cols);
-        System.Console.WriteLine("maze maded");
         MazeView view = new MazeView();
 
         MenuController menuController = new MenuController(maze, view, timeInterval);
