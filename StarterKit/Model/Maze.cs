@@ -33,8 +33,8 @@ namespace Model
             MazeArray = ToMazeArray(lines);
             MazeMDArray = ToMazeMDArray(lines);
         }
-
-        void GenerateMaze(int rows = 20, int cols = 40)
+        
+        void GenerateMaze(int rows = 30, int cols = 40)
         {
             if(rows < 4 || cols < 4) {rows = 20; cols = 40;}
             if(rows % 2 != 0) {rows++;}
