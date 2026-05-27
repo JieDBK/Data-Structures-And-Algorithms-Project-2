@@ -49,7 +49,7 @@ namespace Model
 
                     int newDistance = distance[currentPos[0], currentPos[1]] + 1;
 
-                    if(newDistance < distance[newRow, newCol])
+                    if(newDistance < distance[newRow, newCol]) //kijken of de route naar die positie korter is of niet
                     {
                         distance[newRow, newCol] = newDistance;
                         Parents[(newRow, newCol)] = (currentPos[0], currentPos[1]); //child/neighbour is de key, parent is de value, want je werkt van eind naar begin  
