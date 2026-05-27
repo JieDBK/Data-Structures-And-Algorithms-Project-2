@@ -34,7 +34,7 @@ namespace Model
                     if(distance[position[0], position[1]] < smallestDistance)
                     {
                         currentPos = position;
-                        smallestDistance = distance[position[0], position[1]] + Heuristic(maze, currentPos); 
+                        smallestDistance = distance[position[0], position[1]]; 
                     }
                 }
                 ToVisitPositions.Remove(currentPos);
