@@ -35,7 +35,6 @@ namespace Model
             while (backtrack.Count > 0)
             {
                 int[] currentCell = backtrack.Pop();
-                visitedPositions.Enqueue(currentCell);
                 int currentRow = currentCell[0];
                 int currentCol = currentCell[1];
                 rng.Shuffle(moves);
