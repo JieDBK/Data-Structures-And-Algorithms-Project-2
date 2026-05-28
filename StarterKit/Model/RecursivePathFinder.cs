@@ -5,7 +5,7 @@ namespace Model
 {
     public class RecursivePathFinder : IPathFinder
     {
-        Random rng = new();
+        readonly Random rng = new();
         PathFinderType _algType = PathFinderType.Recursive;
         public PathFinderType algType { get => _algType; set { } }
 
