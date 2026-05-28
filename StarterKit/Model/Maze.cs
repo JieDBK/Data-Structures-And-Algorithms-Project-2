@@ -75,9 +75,29 @@ namespace Model
             // }
 
             Stack<int[]> backtrack = new();
-            jaggedMaze[1][1] = 0; 
-            mdMaze[1, 1] = 0;
-            backtrack.Push([1, 1]);
+            int row;
+            int col;
+            while (true)
+            {
+                row = rng.Next(mdMaze.GetLength(0) - 1);
+                col = rng.Next(mdMaze.GetLength(1) - 1);
+                if (row % 2 == 0)
+                {
+                    row = row + 1;
+                }
+
+                if (col % 2 == 0)
+                {
+                    col = col + 1;
+                }
+                if (IsValidPos(jaggedMaze, row, col))
+                {
+                    jaggedMaze[row][col] = 0;
+                    mdMaze[row, col] = 0;
+                    break;
+                }
+            }
+            backtrack.Push([row, col]);
             while (backtrack.Count > 0)
             {
                 int[] currentCell = backtrack.Pop();
