@@ -118,6 +118,21 @@ namespace Model
                         mdMaze[newRow, newCol] = 0;
                         jaggedMaze[betweenRow][betweenCol] = 0;
                         mdMaze[betweenRow, betweenCol] = 0;
+
+                        if (rng.Next(100) < 15) // 15% kans
+                        {
+                            int extraRow = betweenRow + step[1];
+                            int extraCol = betweenCol + step[0];
+                            if (IsValidPos(jaggedMaze, extraRow, extraCol) && 
+                            extraRow > 0 && extraRow < rows - 1 &&
+                            extraCol > 0 && extraCol < cols - 1 &&
+                            jaggedMaze[extraRow][extraCol] == -1)
+                            {
+                                jaggedMaze[extraRow][extraCol] = 0;
+                                mdMaze[extraRow, extraCol] = 0;
+                            }
+                        }
+
                         backtrack.Push([newRow, newCol]);
                         break;
                     }
@@ -157,19 +172,19 @@ namespace Model
             // Begin = [1,1];
             // End = [rows -2, cols - 2];
 
-            int extraPassages = (rows + cols) / 5; //20% extra passages, kan worden aangepast
-            for(int i = 0; i < extraPassages; i++)
-            {
-                int rndRow = rng.Next(1, rows - 1);
-                int rndCol = rng.Next(1, cols - 1);
+            // int extraPassages = (rows + cols) / 5; //20% extra passages, kan worden aangepast
+            // for(int i = 0; i < extraPassages; i++)
+            // {
+            //     int rndRow = rng.Next(1, rows - 1);
+            //     int rndCol = rng.Next(1, cols - 1);
 
-                if(jaggedMaze[rndRow][rndCol] == -1)
-                {
-                    jaggedMaze[rndRow][rndCol] = 0;
-                    mdMaze[rndRow,rndCol] = 0;
-                }
-                //anders kijken of muur tussen lege vakjes boven en onder of links en rechts ligt
-            }
+            //     if(jaggedMaze[rndRow][rndCol] == -1)
+            //     {
+            //         jaggedMaze[rndRow][rndCol] = 0;
+            //         mdMaze[rndRow,rndCol] = 0;
+            //     }
+            //     //anders kijken of muur tussen lege vakjes boven en onder of links en rechts ligt
+            // }
         }
 
         int[][] ToMazeArray(string maze)
