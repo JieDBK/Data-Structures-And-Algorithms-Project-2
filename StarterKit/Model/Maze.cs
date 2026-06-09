@@ -108,6 +108,21 @@ namespace Model
                             mdMaze[newRow, newCol] = 0;
                             jaggedMaze[betweenRow][betweenCol] = 0;
                             mdMaze[betweenRow, betweenCol] = 0;
+
+                            if (rng.Next(100) < 15) // 15% kans
+                            {
+                                int extraRow = betweenRow + step[1]; //ipv 180 graden blokje weghalen, doe je 90 graden en daarom zet je step[1] bij row ipv col, anders kom je gewoon op newCol of newRow terecht
+                                int extraCol = betweenCol + step[0];
+                                if (IsValidPos(jaggedMaze, extraRow, extraCol) && 
+                                extraRow > 0 && extraRow < rows - 1 &&
+                                extraCol > 0 && extraCol < cols - 1 &&
+                                jaggedMaze[extraRow][extraCol] == -1)
+                                {
+                                    jaggedMaze[extraRow][extraCol] = 0;
+                                    mdMaze[extraRow, extraCol] = 0;
+                                }
+                            }
+
                             backtrack.Push([newRow, newCol]);
                             break;
                         }
@@ -164,12 +179,31 @@ namespace Model
                             mdMaze[newRow, newCol] = 0;
                             jaggedMaze[betweenRow][betweenCol] = 0;
                             mdMaze[betweenRow, betweenCol] = 0;
+
+                            if (rng.Next(100) < 15) // 15% kans
+                            {
+                                int extraRow = betweenRow + step[1];
+                                int extraCol = betweenCol + step[0];
+                                if (IsValidPos(jaggedMaze, extraRow, extraCol) && 
+                                extraRow > 0 && extraRow < rows - 1 &&
+                                extraCol > 0 && extraCol < cols - 1 &&
+                                jaggedMaze[extraRow][extraCol] == -1)
+                                {
+                                    jaggedMaze[extraRow][extraCol] = 0;
+                                    mdMaze[extraRow, extraCol] = 0;
+                                }
+                            }
+
                             neighbours.Enqueue([newRow, newCol]);
                         }                        
                     }
                 }             
             }
 
+            if(bst)
+            {
+                
+            }
 
             for (int i = 1; i < cols; i++)
             {
@@ -205,6 +239,7 @@ namespace Model
             // End = [rows -2, cols - 2];
             
         }
+        
         
 
         void GenerateMazeBFS(int rows = 40, int cols = 40)
