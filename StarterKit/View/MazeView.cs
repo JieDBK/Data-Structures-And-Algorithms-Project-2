@@ -7,14 +7,14 @@ namespace View
     public class MazeView
     {
         //View
-    
+
         public void DisplayMaze(Maze maze)
         {
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
             //Console.Clear();
             var array = maze.MazeArray;
-           
+
             Console.WriteLine("\n");
 
             // Loop over the elements of the maze array
@@ -127,12 +127,12 @@ namespace View
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
             Console.Clear();
-              
+
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}");
+            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
-        
+
             System.Console.WriteLine();
 
             // Loop over the elements of the maze array
@@ -148,10 +148,10 @@ namespace View
                             Console.Write("🟦");   //walls
                             break;
                         case 1:                    //begin 
-                            //if (currPos[0] == rowIdx && currPos[1] == colIdx)
-                            //    Console.Write("⚽️");
-                            //else
-                                Console.Write("🏠");
+                                                   //if (currPos[0] == rowIdx && currPos[1] == colIdx)
+                                                   //    Console.Write("⚽️");
+                                                   //else
+                            Console.Write("🏠");
                             break;
                         case 2:
                             if (currPos[0] == rowIdx && currPos[1] == colIdx)
@@ -163,7 +163,7 @@ namespace View
                             if (currPos[0] == rowIdx && currPos[1] == colIdx)
                                 Console.Write("⚽️");
                             else if (visitedPositions.Any(_ => _[0] == rowIdx && _[1] == colIdx))
-                                Console.Write("🏃");  
+                                Console.Write("🏃");
                             else
                                 Console.Write("  ");
                             break;
@@ -172,7 +172,8 @@ namespace View
                             Console.Write("🏅");    //completed
                             break;
                         case 4:
-                            if (currPos[0] == rowIdx && currPos[1] == colIdx) {
+                            if (currPos[0] == rowIdx && currPos[1] == colIdx)
+                            {
                                 Console.Write("⚽️");
                             }
                             else
@@ -189,29 +190,30 @@ namespace View
 
             for (int colIdx = 0; colIdx <= array[0].Length; colIdx++)
                 Console.Write("🟦");
-            
-            if(algType == PathFinderType.Manual){
+
+            if (algType == PathFinderType.Manual)
+            {
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine("\n\n👉 👉 👉        Press S to go start again.    👈 👈 👈");
                 Console.WriteLine("👉 👉 👉 Press M or ⬅️  to go back to the Menu. 👈 👈 👈\n");
             }
-            
+
             if (!maze.IsValidMove(currPos[0], currPos[1], true))
             {
                 PrintWrongMove(currPos);
             }
 
-            if (currPos[0] == maze.End[0] && currPos[1] ==maze.End[1]) //completed
+            if (currPos[0] == maze.End[0] && currPos[1] == maze.End[1]) //completed
             {
                 //Reset Maze
-                visitedPositions = new Queue<int[]>(); 
+                visitedPositions = new Queue<int[]>();
                 Console.WriteLine("\n");
                 Console.WriteLine("👍 DONE!!! AMAZING!!! 👍");
                 Thread.Sleep(300);
                 return;
-                
+
             }
-       
+
         }
 
         public void DisplayMaze(Maze maze, string[] symbolsArr, int timeInterval, Queue<int[]> visitedPositions)
@@ -329,7 +331,7 @@ namespace View
                 //     array[currPos[0], currPos[1]] = 4;
 
                 Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3) )}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1)/2 - algType.ToString().Length/3))}");
+                Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}");
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.WriteLine();
@@ -364,7 +366,10 @@ namespace View
                                 }
                                 else if (shownPositions.Any(_ => _[0] == rowIdx && _[1] == colIdx))
                                 {
-                                    Console.Write("🏃");
+                                    List<int[]>? shownList = shownPositions.ToList();
+                                    int index = shownList.FindIndex(position => position[0] == rowIdx && position[1] == colIdx);
+                                    int symbolIndex = shownList.Count - 1 - index; //flip the index so newest gets 0 instead of the last index
+                                    Console.Write(symbolsArr[symbolIndex % symbolsArr.Length]); //module it with length so we dont go out of bound
                                 }
                                 else
                                     Console.Write("  ");
@@ -401,17 +406,17 @@ namespace View
 
         public string[] generateSymbols(int spaces)
         {
-            var rnd = new Random(); 
-            var symbols = new string[2*spaces];
+            var rnd = new Random();
+            var symbols = new string[2 * spaces];
             for (int i = 0; i < 2 * spaces; i++)
             {
-            /*
-                if(i < 10)
-                    symbols[i] = ":" + i;
-                else
-                    symbols[i] = (i % 100) < 10 ? ":" + (i % 100) : (i % 100) + "";
+                /*
+                    if(i < 10)
+                        symbols[i] = ":" + i;
+                    else
+                        symbols[i] = (i % 100) < 10 ? ":" + (i % 100) : (i % 100) + "";
 
-            */
+                */
                 if (rnd.NextDouble() < 0.3)
                 {
                     symbols[i] = "🦖";
@@ -435,7 +440,7 @@ namespace View
         {
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine(success ? msg + "🎉 Path found! 🎊" : msg + "🔎  No path found. 🔎 ");
-            if(!success) 
+            if (!success)
                 Thread.Sleep(timeInterval);
         }
         private void PrintWrongMove(int[] tmppos)
@@ -445,7 +450,7 @@ namespace View
             Console.WriteLine($"Wrong Direction -> {tmppos[0]}, {tmppos[1]}");
 
             Thread.Sleep(100);
-            Console.BackgroundColor = ConsoleColor.White;       
+            Console.BackgroundColor = ConsoleColor.White;
         }
     }
 }
