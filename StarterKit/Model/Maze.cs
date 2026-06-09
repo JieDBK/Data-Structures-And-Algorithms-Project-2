@@ -34,7 +34,7 @@ namespace Model
             MazeMDArray = ToMazeMDArray(lines);
         }
         
-        void GenerateMaze(int rows = 30, int cols = 40)
+        void GenerateMaze(int rows = 30, int cols = 40, bool dfs = true) //if dfs == false, it will be bfs (optie om te kiezen moet nog komen)
         {
             if(rows < 4 || cols < 4) {rows = 20; cols = 40;}
             if(rows % 2 != 0) {rows++;}
@@ -62,67 +62,114 @@ namespace Model
                 }
             }
 
-            // int randomRow;
-            // int randomCol;  
-            // while (true)
-            // {
-            //     randomRow = rng.Next(1, rows);
-            //     randomCol = rng.Next(1, cols);
-            //     if (IsValidPos(jaggedMaze, randomRow, randomCol) && jaggedMaze[randomRow][randomCol] == -1)
-            //     {
-            //         break;
-            //     }
-            // }
-
-            Stack<int[]> backtrack = new();
-            int row;
-            int col;
-            while (true)
+            if (dfs)
             {
-                row = rng.Next(mdMaze.GetLength(0) - 1);
-                col = rng.Next(mdMaze.GetLength(1) - 1);
-                if (row % 2 == 0)
+                Stack<int[]> backtrack = new();
+                int row;
+                int col;
+                while (true)
                 {
-                    row = row + 1;
-                }
-
-                if (col % 2 == 0)
-                {
-                    col = col + 1;
-                }
-                if (IsValidPos(jaggedMaze, row, col))
-                {
-                    jaggedMaze[row][col] = 0;
-                    mdMaze[row, col] = 0;
-                    break;
-                }
-            }
-            backtrack.Push([row, col]);
-            while (backtrack.Count > 0)
-            {
-                int[] currentCell = backtrack.Pop();
-                int currentRow = currentCell[0];
-                int currentCol = currentCell[1];
-                rng.Shuffle(movesGen);
-                foreach (int[] step in movesGen)
-                {
-                    int newRow = currentRow + (step[0] * 2); //step of 2
-                    int newCol = currentCol + (step[1] * 2);
-                    int betweenRow = currentRow + step[0];
-                    int betweenCol = currentCol + step[1];
-                    // if (step[0] == -1)
-                    if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
+                    row = rng.Next(mdMaze.GetLength(0) - 1);
+                    col = rng.Next(mdMaze.GetLength(1) - 1);
+                    if (row % 2 == 0)
                     {
-                        backtrack.Push(currentCell);
-                        jaggedMaze[newRow][newCol] = 0;
-                        mdMaze[newRow, newCol] = 0;
-                        jaggedMaze[betweenRow][betweenCol] = 0;
-                        mdMaze[betweenRow, betweenCol] = 0;
-                        backtrack.Push([newRow, newCol]);
+                        row = row + 1;
+                    }
+
+                    if (col % 2 == 0)
+                    {
+                        col = col + 1;
+                    }
+                    if (IsValidPos(jaggedMaze, row, col))
+                    {
+                        jaggedMaze[row][col] = 0;
+                        mdMaze[row, col] = 0;
                         break;
                     }
                 }
+                backtrack.Push([row, col]);
+                while (backtrack.Count > 0)
+                {
+                    int[] currentCell = backtrack.Pop();
+                    int currentRow = currentCell[0];
+                    int currentCol = currentCell[1];
+                    rng.Shuffle(movesGen);
+                    foreach (int[] step in movesGen)
+                    {
+                        int newRow = currentRow + (step[0] * 2); //step of 2
+                        int newCol = currentCol + (step[1] * 2);
+                        int betweenRow = currentRow + step[0];
+                        int betweenCol = currentCol + step[1];
+                        // if (step[0] == -1)
+                        if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
+                        {
+                            backtrack.Push(currentCell);
+                            jaggedMaze[newRow][newCol] = 0;
+                            mdMaze[newRow, newCol] = 0;
+                            jaggedMaze[betweenRow][betweenCol] = 0;
+                            mdMaze[betweenRow, betweenCol] = 0;
+                            backtrack.Push([newRow, newCol]);
+                            break;
+                        }
+                    }
+                }                
             }
+            else
+            {
+                Queue<int[]> neighbours = new();
+                bool[,] visited = new bool[rows, cols];
+                int row;
+                int col;
+                while (true)
+                {
+                    row = rng.Next(mdMaze.GetLength(0) - 1);
+                    col = rng.Next(mdMaze.GetLength(1) - 1);
+                    if (row % 2 == 0)
+                    {
+                        row = row + 1;
+                    }
+
+                    if (col % 2 == 0)
+                    {
+                        col = col + 1;
+                    }
+                    if (IsValidPos(jaggedMaze, row, col))
+                    {
+                        jaggedMaze[row][col] = 0;
+                        mdMaze[row, col] = 0;
+                        break;
+                    }
+                }
+                neighbours.Enqueue([row, col]);
+                while (neighbours.Count > 0)
+                {
+                    int[] currentCell = neighbours.Dequeue();
+                    int currentRow = currentCell[0];
+                    int currentCol = currentCell[1];
+                    if (visited[currentRow, currentCol] == true)
+                    {
+                        continue;
+                    }
+                    visited[currentRow, currentCol] = true;
+                    rng.Shuffle(movesGen);
+                    foreach (int[] step in movesGen)
+                    {
+                        int newRow = currentRow + (step[0] * 2); //step of 2
+                        int newCol = currentCol + (step[1] * 2);
+                        int betweenRow = currentRow + step[0];
+                        int betweenCol = currentCol + step[1];
+                        if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
+                        {
+                            jaggedMaze[newRow][newCol] = 0;
+                            mdMaze[newRow, newCol] = 0;
+                            jaggedMaze[betweenRow][betweenCol] = 0;
+                            mdMaze[betweenRow, betweenCol] = 0;
+                            neighbours.Enqueue([newRow, newCol]);
+                        }                        
+                    }
+                }             
+            }
+
 
             for (int i = 1; i < cols; i++)
             {
@@ -158,7 +205,12 @@ namespace Model
             // End = [rows -2, cols - 2];
             
         }
+        
 
+        void GenerateMazeBFS(int rows = 40, int cols = 40)
+        {
+            
+        }
         int[][] ToMazeArray(string maze)
         {
             // substrings from the maze string
