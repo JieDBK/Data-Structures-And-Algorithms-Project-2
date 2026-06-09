@@ -222,26 +222,29 @@ namespace Model
                     }
                 }
 
-                for (int r = 1; r < rows - 1; r += 2)
+                for (int r = 1; r < rows; r += 2)
                 {
-                    for (int c = 1; c < cols - 1; c += 2)
-                    {
-                        // 1. Maak de huidige cel een passage
+                    for (int c = 1; c < cols; c += 2)
+                    {                        
                         jaggedMaze[r][c] = 0;
 
-                        // 2. Bepaal welke richtingen MOGELIJK zijn (Noord of West)
-                        List<int[]> possibleBinaryDirections = new List<int[]>();
+                        List<int[]> directions = new List<int[]>();
+                        int[][] movesBinary = { moves[1], moves[3] };
                         
-                        if (r > 1) possibleBinaryDirections.Add(new int[] { -1, 0 }); // Noord
-                        if (c > 1) possibleBinaryDirections.Add(new int[] { 0, -1 }); // West
-
-                        // 3. Kies en hak uit (behalve voor de linksboven hoek)
-                        if (possibleBinaryDirections.Count > 0)
+                        foreach (var move in movesBinary)
                         {
-                            int[] choice = possibleBinaryDirections[rng.Next(possibleBinaryDirections.Count)];
-                            
-                            // Hak de muur tussen de cellen uit
-                            jaggedMaze[r + choice[0]][c + choice[1]] = 0;
+                            int nr = r + move[0] * 2;
+                            int nc = c + move[1] * 2;
+
+                            if (nr >= 1 && nr < rows && nc >= 1 && nc < cols)
+                                directions.Add(move);
+                        }
+
+                        if (directions.Count > 0)
+                        {
+                            int[] chosenDirection = directions[rng.Next(directions.Count)];
+                            jaggedMaze[r + chosenDirection[0]][c + chosenDirection[1]] = 0;
+                            jaggedMaze[r + chosenDirection[0] * 2][c + chosenDirection[1] * 2] = 0;
                         }
                     }
                 }
