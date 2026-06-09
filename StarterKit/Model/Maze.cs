@@ -34,7 +34,7 @@ namespace Model
             MazeMDArray = ToMazeMDArray(lines);
         }
         
-        void GenerateMaze(int rows = 30, int cols = 40, bool dfs = true) //if dfs == false, it will be bfs (optie om te kiezen moet nog komen)
+        void GenerateMaze(int rows = 30, int cols = 40, bool dfs = false) //if dfs == false, it will be bfs (optie om te kiezen moet nog komen)
         {
             if(rows < 4 || cols < 4) {rows = 20; cols = 40;}
             if(rows % 2 != 0) {rows++;}
