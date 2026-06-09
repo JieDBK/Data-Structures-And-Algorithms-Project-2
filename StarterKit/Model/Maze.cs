@@ -226,27 +226,22 @@ namespace Model
                 {
                     for (int c = 1; c < cols - 1; c += 2)
                     {
+                        // 1. Maak de huidige cel een passage
                         jaggedMaze[r][c] = 0;
 
-                        List<int[]> directions = new List<int[]>();
+                        // 2. Bepaal welke richtingen MOGELIJK zijn (Noord of West)
+                        List<int[]> possibleBinaryDirections = new List<int[]>();
+                        
+                        if (r > 1) possibleBinaryDirections.Add(new int[] { -1, 0 }); // Noord
+                        if (c > 1) possibleBinaryDirections.Add(new int[] { 0, -1 }); // West
 
-                        foreach (var move in movesGen)
+                        // 3. Kies en hak uit (behalve voor de linksboven hoek)
+                        if (possibleBinaryDirections.Count > 0)
                         {
-                            int nr = r + move[0] * 2;  // *2 omdat je per 2 springt
-                            int nc = c + move[1] * 2;
-
-                            // Check of de nieuwe positie binnen het doolhof valt
-                            if (nr > 0 && nr < rows - 1 && nc > 0 && nc < cols - 1)
-                                directions.Add(move);
-                        }
-
-                        if (directions.Count > 0)
-                        {
-                            int[] chosenDirection = directions[rng.Next(directions.Count)];
-
-                            // *1 = muur ertussen, *2 = de cel zelf
-                            jaggedMaze[r + chosenDirection[0]][c + chosenDirection[1]] = 0;       // muur
-                            jaggedMaze[r + chosenDirection[0] * 2][c + chosenDirection[1] * 2] = 0; // cel
+                            int[] choice = possibleBinaryDirections[rng.Next(possibleBinaryDirections.Count)];
+                            
+                            // Hak de muur tussen de cellen uit
+                            jaggedMaze[r + choice[0]][c + choice[1]] = 0;
                         }
                     }
                 }
