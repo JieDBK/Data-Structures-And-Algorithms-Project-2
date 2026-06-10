@@ -24,7 +24,8 @@ namespace Controller
         public void Run()
         {
             var symbols = _view.generateSymbols(_maze.CountNotVisited());
-            if(_pathFinder.algType == PathFinderType.Manual){
+            if (_pathFinder.algType == PathFinderType.Manual)
+            {
                 _timeInterval = 0;
                 var visitedPositions = new Queue<int[]>();
 
@@ -32,9 +33,9 @@ namespace Controller
 
                 ConsoleKey consoleKey = ConsoleKey.None;
                 visitedPositions.Enqueue(pos);
-                
+
                 while (consoleKey != ConsoleKey.Q)
-                { 
+                {
                     /* 
                     //moves:
                     {           
@@ -47,15 +48,15 @@ namespace Controller
 
                     //_view.DisplayMaze(_maze, symbols, _timeInterval, visitedPositions, _view.PrintFunc, _algType);
                     _view.DisplayMaze(_maze, pos, symbols, visitedPositions);
-                    if (pos[0] == _maze.End[0] && pos[1] ==_maze.End[1]) //completed
+                    if (pos[0] == _maze.End[0] && pos[1] == _maze.End[1]) //completed
                     {
                         return;
                     }
-                    _pathFinder.FindPath(_maze, pos, visitedPositions); 
+                    _pathFinder.FindPath(_maze, pos, visitedPositions);
 
                     consoleKey = Console.ReadKey(true).Key;
                     int[] tmppos = pos;
-                    
+
                     switch (consoleKey)
                     {
                         case ConsoleKey.L or ConsoleKey.LeftArrow:
@@ -83,26 +84,47 @@ namespace Controller
                             break;
                     }
 
-                    if (_maze.IsValidMove(tmppos[0], tmppos[1], true)){
+                    if (_maze.IsValidMove(tmppos[0], tmppos[1], true))
+                    {
                         pos = tmppos;
                     }
-                    else {
+                    else
+                    {
                         _view.DisplayMaze(_maze, tmppos, symbols, visitedPositions);
                     }
 
                 }
             }
             //Algorithms part of Controller:
-            else{
+            else
+            {
                 _view.DisplayMaze(_maze);
                 var visitedPositions = new Queue<int[]>();
+                List<int[]> correctPath = new();
+                List<int[]> shortestPath = new();
+
                 _pathFinder.FindPath(_maze, _maze.Begin, visitedPositions);
+
+                if (_pathFinder is RecursivePathFinder || _pathFinder is StackPathFinder)
+                {
+                    correctPath = _pathFinder.correctPath;
+                    var dijkstra = new DijkstraPathFinder();
+                    var dijkstraVisited = new Queue<int[]>();
+                    dijkstra.FindPath(_maze, _maze.Begin, dijkstraVisited);
+                    shortestPath = dijkstra.correctPath;
+                }
+
+                if (_pathFinder is DijkstraPathFinder || _pathFinder is AStarPathFinder)
+                {
+                    shortestPath = _pathFinder.correctPath;
+                }
+
                 bool success = visitedPositions.ToList().Last()[0] == _maze.End[0] && visitedPositions.ToList().Last()[1] == _maze.End[1];
-                string msg = $"\n\n{String.Join("", Enumerable.Repeat(" ", _maze.MazeMDArray.GetLength(1)/6))}";
+                string msg = $"\n\n{String.Join("", Enumerable.Repeat(" ", _maze.MazeMDArray.GetLength(1) / 6))}";
                 //_view.DisplayMaze(_maze, symbols, _timeInterval, visitedPositions);
-                _view.DisplayMaze(_maze, symbols, _timeInterval, visitedPositions, _pathFinder.algType);
+                _view.DisplayMaze(_maze, symbols, _timeInterval, visitedPositions, _pathFinder.algType, correctPath, shortestPath);
                 _view.DisplaySuccess(success, msg, _timeInterval);
-                
+
             }
         }
 

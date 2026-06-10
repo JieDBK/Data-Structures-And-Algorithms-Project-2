@@ -6,24 +6,28 @@ namespace Model
     public class StackPathFinder : IPathFinder
     {
         PathFinderType _algType = PathFinderType.Stack;
-        public PathFinderType algType { get => _algType; set {} }
+        public PathFinderType algType { get => _algType; set { } }
+        public List<int[]> correctPath { get; set; } = [];
 
         public void FindPath(Maze maze, int[] pos, Queue<int[]> visitedPositions)
         {
+            correctPath.Clear();
+            Dictionary<(int, int), (int, int)> Parents = new();
+
             Random rng = new();
             //ToDo implement this method
             if (maze.MazeArray == null || maze.MazeArray.Length == 0 || maze.MazeArray[0].Length == 0 ||
                 pos == null || pos.Length != 2 ||
-                !maze.IsValidMove(pos[0], pos[1]) || 
+                !maze.IsValidMove(pos[0], pos[1]) ||
                 visitedPositions.Count > 0
                 )
-                // visitedPositions.Any(_ => _[0] == pos[0] && _[1] == pos[1]) ||
-                // visitedPositions.Any(_ => _[0] == maze.End[0] && _[1] == maze.End[1])
+            // visitedPositions.Any(_ => _[0] == pos[0] && _[1] == pos[1]) ||
+            // visitedPositions.Any(_ => _[0] == maze.End[0] && _[1] == maze.End[1])
             {
                 return;
             }
 
-            int[][] moves = {           
+            int[][] moves = {
                         new int[] {  1,  0 },  //down
                         new int[] { -1,  0 },  //up
                         new int[] {  0, -1 },  //left
@@ -33,6 +37,8 @@ namespace Model
 
             Stack<int[]> backtrack = new();
             backtrack.Push(pos);
+            visitedPositions.Enqueue(pos);
+
             while (backtrack.Count > 0)
             {
                 int[] currentCell = backtrack.Pop();
@@ -47,6 +53,7 @@ namespace Model
                     {
                         backtrack.Push(currentCell);
                         backtrack.Push([newRow, newCol]);
+                        Parents[(newRow, newCol)] = (currentRow, currentCol);
                         visitedPositions.Enqueue([newRow, newCol]);
                         break;
                     }
@@ -54,13 +61,28 @@ namespace Model
 
                 if (visitedPositions.Any(_ => _[0] == maze.End[0] && _[1] == maze.End[1]))
                 {
+                    List<int[]> route = [];
+                    int[] current = maze.End;
+                    while (Parents.ContainsKey((current[0], current[1]))) //de startlocatie is een parent en geen child en heeft dus geen key en dan stopt de loop
+                    {
+                        route.Add(current);
+                        (int row, int col) parent = Parents[(current[0], current[1])];
+                        current = new int[] { parent.row, parent.col };
+                    }
+
+                    route.Add(current);
+                    route.Reverse();
+                    foreach (int[] place in route)
+                    {
+                        correctPath.Add(place);
+                    }
                     return;
                 }
-            }               
+            }
 
-        }       
+        }
     }
 }
 
-            
+
 
