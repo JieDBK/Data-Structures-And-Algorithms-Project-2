@@ -42,7 +42,7 @@ namespace Model
             do
             {
                 input = Console.ReadLine();
-            }while(!int.TryParse(input, out choice) && choice > 0 && choice < 4);
+            }while(!int.TryParse(input, out choice) || choice < 1 || choice > 3);
             return choice;
         }
         
