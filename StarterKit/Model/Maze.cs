@@ -33,9 +33,23 @@ namespace Model
             MazeArray = ToMazeArray(lines);
             MazeMDArray = ToMazeMDArray(lines);
         }
-        
-        void GenerateMaze(int rows = 30, int cols = 40, bool dfs = true) //if dfs == false, it will be bfs (optie om te kiezen moet nog komen)
+
+        int ChooseOption()
         {
+            Console.WriteLine("Choose between (put the number): \n1.Depth-First Search\n2.Breadth-First Search\n3.Binary Tree");
+            string? input;
+            int choice;
+            do
+            {
+                input = Console.ReadLine();
+            }while(!int.TryParse(input, out choice) && choice > 0 && choice < 4);
+            return choice;
+        }
+        
+        void GenerateMaze(int rows = 30, int cols = 40)
+        {
+            int option = ChooseOption();
+
             if(rows < 4 || cols < 4) {rows = 20; cols = 40;}
             if(rows % 2 != 0) {rows++;}
             if(cols % 2 != 0) {cols++;}
@@ -62,146 +76,145 @@ namespace Model
                 }
             }
 
-            // if (dfs)
-            // {
-            //     Stack<int[]> backtrack = new();
-            //     int row;
-            //     int col;
-            //     while (true)
-            //     {
-            //         row = rng.Next(mdMaze.GetLength(0) - 1);
-            //         col = rng.Next(mdMaze.GetLength(1) - 1);
-            //         if (row % 2 == 0)
-            //         {
-            //             row = row + 1;
-            //         }
+            if(option == 1)
+            {
+                Stack<int[]> backtrack = new();
+                int row;
+                int col;
+                while (true)
+                {
+                    row = rng.Next(mdMaze.GetLength(0) - 1);
+                    col = rng.Next(mdMaze.GetLength(1) - 1);
+                    if (row % 2 == 0)
+                    {
+                        row = row + 1;
+                    }
 
-            //         if (col % 2 == 0)
-            //         {
-            //             col = col + 1;
-            //         }
-            //         if (IsValidPos(jaggedMaze, row, col))
-            //         {
-            //             jaggedMaze[row][col] = 0;
-            //             mdMaze[row, col] = 0;
-            //             break;
-            //         }
-            //     }
-            //     backtrack.Push([row, col]);
-            //     while (backtrack.Count > 0)
-            //     {
-            //         int[] currentCell = backtrack.Pop();
-            //         int currentRow = currentCell[0];
-            //         int currentCol = currentCell[1];
-            //         rng.Shuffle(movesGen);
-            //         foreach (int[] step in movesGen)
-            //         {
-            //             int newRow = currentRow + (step[0] * 2); //step of 2
-            //             int newCol = currentCol + (step[1] * 2);
-            //             int betweenRow = currentRow + step[0];
-            //             int betweenCol = currentCol + step[1];
-            //             // if (step[0] == -1)
-            //             if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
-            //             {
-            //                 backtrack.Push(currentCell);
-            //                 jaggedMaze[newRow][newCol] = 0;
-            //                 mdMaze[newRow, newCol] = 0;
-            //                 jaggedMaze[betweenRow][betweenCol] = 0;
-            //                 mdMaze[betweenRow, betweenCol] = 0;
+                    if (col % 2 == 0)
+                    {
+                        col = col + 1;
+                    }
+                    if (IsValidPos(jaggedMaze, row, col))
+                    {
+                        jaggedMaze[row][col] = 0;
+                        mdMaze[row, col] = 0;
+                        break;
+                    }
+                }
+                backtrack.Push([row, col]);
+                while (backtrack.Count > 0)
+                {
+                    int[] currentCell = backtrack.Pop();
+                    int currentRow = currentCell[0];
+                    int currentCol = currentCell[1];
+                    rng.Shuffle(movesGen);
+                    foreach (int[] step in movesGen)
+                    {
+                        int newRow = currentRow + (step[0] * 2); //step of 2
+                        int newCol = currentCol + (step[1] * 2);
+                        int betweenRow = currentRow + step[0];
+                        int betweenCol = currentCol + step[1];
+                        // if (step[0] == -1)
+                        if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
+                        {
+                            backtrack.Push(currentCell);
+                            jaggedMaze[newRow][newCol] = 0;
+                            mdMaze[newRow, newCol] = 0;
+                            jaggedMaze[betweenRow][betweenCol] = 0;
+                            mdMaze[betweenRow, betweenCol] = 0;
 
-            //                 if (rng.Next(100) < 15) // 15% kans
-            //                 {
-            //                     int extraRow = betweenRow + step[1]; //ipv 180 graden blokje weghalen, doe je 90 graden en daarom zet je step[1] bij row ipv col, anders kom je gewoon op newCol of newRow terecht
-            //                     int extraCol = betweenCol + step[0];
-            //                     if (IsValidPos(jaggedMaze, extraRow, extraCol) && 
-            //                     extraRow > 0 && extraRow < rows - 1 &&
-            //                     extraCol > 0 && extraCol < cols - 1 &&
-            //                     jaggedMaze[extraRow][extraCol] == -1)
-            //                     {
-            //                         jaggedMaze[extraRow][extraCol] = 0;
-            //                         mdMaze[extraRow, extraCol] = 0;
-            //                     }
-            //                 }
+                            if (rng.Next(100) < 15) // 15% kans
+                            {
+                                int extraRow = betweenRow + step[1]; //ipv 180 graden blokje weghalen, doe je 90 graden en daarom zet je step[1] bij row ipv col, anders kom je gewoon op newCol of newRow terecht
+                                int extraCol = betweenCol + step[0];
+                                if (IsValidPos(jaggedMaze, extraRow, extraCol) && 
+                                extraRow > 0 && extraRow < rows - 1 &&
+                                extraCol > 0 && extraCol < cols - 1 &&
+                                jaggedMaze[extraRow][extraCol] == -1)
+                                {
+                                    jaggedMaze[extraRow][extraCol] = 0;
+                                    mdMaze[extraRow, extraCol] = 0;
+                                }
+                            }
 
-            //                 backtrack.Push([newRow, newCol]);
-            //                 break;
-            //             }
-            //         }
-            //     }                
-            // }
-            // else
-            // {
-            //     Queue<int[]> neighbours = new();
-            //     bool[,] visited = new bool[rows, cols];
-            //     int row;
-            //     int col;
-            //     while (true)
-            //     {
-            //         row = rng.Next(mdMaze.GetLength(0) - 1);
-            //         col = rng.Next(mdMaze.GetLength(1) - 1);
-            //         if (row % 2 == 0)
-            //         {
-            //             row = row + 1;
-            //         }
+                            backtrack.Push([newRow, newCol]);
+                            break;
+                        }
+                    }
+                }                
+            }
+            else if(option == 2)
+            {
+                Queue<int[]> neighbours = new();
+                bool[,] visited = new bool[rows, cols];
+                int row;
+                int col;
+                while (true)
+                {
+                    row = rng.Next(mdMaze.GetLength(0) - 1);
+                    col = rng.Next(mdMaze.GetLength(1) - 1);
+                    if (row % 2 == 0)
+                    {
+                        row = row + 1;
+                    }
 
-            //         if (col % 2 == 0)
-            //         {
-            //             col = col + 1;
-            //         }
-            //         if (IsValidPos(jaggedMaze, row, col))
-            //         {
-            //             jaggedMaze[row][col] = 0;
-            //             mdMaze[row, col] = 0;
-            //             break;
-            //         }
-            //     }
-            //     neighbours.Enqueue([row, col]);
-            //     while (neighbours.Count > 0)
-            //     {
-            //         int[] currentCell = neighbours.Dequeue();
-            //         int currentRow = currentCell[0];
-            //         int currentCol = currentCell[1];
-            //         if (visited[currentRow, currentCol] == true)
-            //         {
-            //             continue;
-            //         }
-            //         visited[currentRow, currentCol] = true;
-            //         rng.Shuffle(movesGen);
-            //         foreach (int[] step in movesGen)
-            //         {
-            //             int newRow = currentRow + (step[0] * 2); //step of 2
-            //             int newCol = currentCol + (step[1] * 2);
-            //             int betweenRow = currentRow + step[0];
-            //             int betweenCol = currentCol + step[1];
-            //             if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
-            //             {
-            //                 jaggedMaze[newRow][newCol] = 0;
-            //                 mdMaze[newRow, newCol] = 0;
-            //                 jaggedMaze[betweenRow][betweenCol] = 0;
-            //                 mdMaze[betweenRow, betweenCol] = 0;
+                    if (col % 2 == 0)
+                    {
+                        col = col + 1;
+                    }
+                    if (IsValidPos(jaggedMaze, row, col))
+                    {
+                        jaggedMaze[row][col] = 0;
+                        mdMaze[row, col] = 0;
+                        break;
+                    }
+                }
+                neighbours.Enqueue([row, col]);
+                while (neighbours.Count > 0)
+                {
+                    int[] currentCell = neighbours.Dequeue();
+                    int currentRow = currentCell[0];
+                    int currentCol = currentCell[1];
+                    if (visited[currentRow, currentCol] == true)
+                    {
+                        continue;
+                    }
+                    visited[currentRow, currentCol] = true;
+                    rng.Shuffle(movesGen);
+                    foreach (int[] step in movesGen)
+                    {
+                        int newRow = currentRow + (step[0] * 2); //step of 2
+                        int newCol = currentCol + (step[1] * 2);
+                        int betweenRow = currentRow + step[0];
+                        int betweenCol = currentCol + step[1];
+                        if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
+                        {
+                            jaggedMaze[newRow][newCol] = 0;
+                            mdMaze[newRow, newCol] = 0;
+                            jaggedMaze[betweenRow][betweenCol] = 0;
+                            mdMaze[betweenRow, betweenCol] = 0;
 
-            //                 if (rng.Next(100) < 15) // 15% kans
-            //                 {
-            //                     int extraRow = betweenRow + step[1];
-            //                     int extraCol = betweenCol + step[0];
-            //                     if (IsValidPos(jaggedMaze, extraRow, extraCol) && 
-            //                     extraRow > 0 && extraRow < rows - 1 &&
-            //                     extraCol > 0 && extraCol < cols - 1 &&
-            //                     jaggedMaze[extraRow][extraCol] == -1)
-            //                     {
-            //                         jaggedMaze[extraRow][extraCol] = 0;
-            //                         mdMaze[extraRow, extraCol] = 0;
-            //                     }
-            //                 }
+                            if (rng.Next(100) < 15) // 15% kans
+                            {
+                                int extraRow = betweenRow + step[1];
+                                int extraCol = betweenCol + step[0];
+                                if (IsValidPos(jaggedMaze, extraRow, extraCol) && 
+                                extraRow > 0 && extraRow < rows - 1 &&
+                                extraCol > 0 && extraCol < cols - 1 &&
+                                jaggedMaze[extraRow][extraCol] == -1)
+                                {
+                                    jaggedMaze[extraRow][extraCol] = 0;
+                                    mdMaze[extraRow, extraCol] = 0;
+                                }
+                            }
 
-            //                 neighbours.Enqueue([newRow, newCol]);
-            //             }                        
-            //         }
-            //     }             
-            // }
+                            neighbours.Enqueue([newRow, newCol]);
+                        }                        
+                    }
+                }             
+            }
 
-            bool bst = true;
-            if(bst)
+            else if(option == 3)
             {
                 int row;
                 int col;
@@ -210,9 +223,8 @@ namespace Model
                     row = rng.Next(mdMaze.GetLength(0) - 1);
                     col = rng.Next(mdMaze.GetLength(1) - 1);
                     
-                    // Zorg dat row en col oneven zijn (cel-positie, niet muur)
-                    if (row % 2 == 0) row = row + 1;
-                    if (col % 2 == 0) col = col + 1;
+                    if (row % 2 == 0) row++;
+                    if (col % 2 == 0) col++;
                     
                     if (IsValidPos(jaggedMaze, row, col))
                     {
@@ -228,28 +240,27 @@ namespace Model
                     {                        
                         jaggedMaze[r][c] = 0;
 
-                        List<int[]> directions = new List<int[]>();
-                        int[][] movesBinary = { moves[1], moves[3] };
+                        List<int[]> directions = new ();
+                        int[][] movesBinary = { moves[0], moves[3] };
                         
-                        foreach (var move in movesBinary)
+                        foreach (int[] step in movesBinary) //check of volgende kamer binnen het grid valt
                         {
-                            int nr = r + move[0] * 2;
-                            int nc = c + move[1] * 2;
+                            int newRow = r + step[0] * 2;
+                            int newCol = c + step[1] * 2;
 
-                            if (nr >= 1 && nr < rows && nc >= 1 && nc < cols)
-                                directions.Add(move);
+                            if (newRow >= 1 && newRow < rows && newCol >= 1 && newCol < cols)
+                                directions.Add(step);
                         }
 
                         if (directions.Count > 0)
                         {
                             int[] chosenDirection = directions[rng.Next(directions.Count)];
-                            jaggedMaze[r + chosenDirection[0]][c + chosenDirection[1]] = 0;
-                            jaggedMaze[r + chosenDirection[0] * 2][c + chosenDirection[1] * 2] = 0;
+                            jaggedMaze[r + chosenDirection[0]][c + chosenDirection[1]] = 0; //breekt muur open
+                            jaggedMaze[r + chosenDirection[0] * 2][c + chosenDirection[1] * 2] = 0; //breekt volgende kamer open
                         }
                     }
                 }
             
-                // 4. Synchroniseer Jagged Array naar Multi-Dimensionale Array [1, 7]
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = 0; j < cols; j++)
