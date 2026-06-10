@@ -306,7 +306,7 @@ namespace View
             }
         }
 
-        public void DisplayMaze(Maze maze, string[] symbolsArr, int timeInterval, Queue<int[]> visitedPositions, PathFinderType algType = PathFinderType.Manual)
+        public void DisplayMaze(Maze maze, string[] symbolsArr, int timeInterval, Queue<int[]> visitedPositions, PathFinderType algType = PathFinderType.Manual, List<int[]> correctPath = null, List<int[]> shortestPath = null)
         {
 
             var array = maze.MazeMDArray;
@@ -338,6 +338,7 @@ namespace View
 
                 // Loop over the elements of the maze array
                 // and display as characters.
+                List<int[]>? shownList = shownPositions.ToList();
                 for (int rowIdx = 0; rowIdx < array.GetLength(0); rowIdx++)
                 {
                     for (int colIdx = 0; colIdx < array.GetLength(1); colIdx++)
@@ -366,7 +367,6 @@ namespace View
                                 }
                                 else if (shownPositions.Any(_ => _[0] == rowIdx && _[1] == colIdx))
                                 {
-                                    List<int[]>? shownList = shownPositions.ToList();
                                     int index = shownList.FindIndex(position => position[0] == rowIdx && position[1] == colIdx);
                                     int symbolIndex = shownList.Count - 1 - index; //flip the index so newest gets 0 instead of the last index
                                     Console.Write(symbolsArr[symbolIndex % symbolsArr.Length]); //module it with length so we dont go out of bound
@@ -402,6 +402,62 @@ namespace View
                 Thread.Sleep(timeInterval);
                 //Console.Clear();
             }
+
+            Console.Clear();
+            // header
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.WriteLine();
+
+            for (int rowIdx = 0; rowIdx < array.GetLength(0); rowIdx++)
+            {
+                for (int colIdx = 0; colIdx < array.GetLength(1); colIdx++)
+                {
+                    if (shortestPath != null && shortestPath.Any(p => p[0] == rowIdx && p[1] == colIdx))
+                    {
+                        Console.Write("🟢");
+                    }
+                    else if (correctPath != null && correctPath.Any(p => p[0] == rowIdx && p[1] == colIdx))
+                    {
+                        Console.Write("🔴");
+                    }
+                    else if (shownPositions != null && shownPositions.Any(p => p[0] == rowIdx && p[1] == colIdx))
+                    {
+                        Console.Write("🏃");
+                    }
+                    else
+                    {
+                        switch (array[rowIdx, colIdx])
+                        {
+                            case -1:
+                                Console.Write("🟦");
+                                break;
+                            case 1:
+                                Console.Write("🏠");
+                                break;
+                            case 2:
+                                Console.Write("🍦");
+                                break;
+                            case 0:
+                                Console.Write("  ");
+                                break;
+                        }
+                    }
+                }
+                Console.WriteLine("🟦");
+            }
+            // bottom wall
+            for (int colIdx = 0; colIdx <= array.GetLength(1); colIdx++)
+                Console.Write("🟦");
+            Console.WriteLine();
+            Thread.Sleep(timeInterval);
+
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("\n\n Press any key to go back to the menu...");
+            Console.ReadKey(true);
         }
 
         public string[] generateSymbols(int spaces)
