@@ -216,25 +216,7 @@ namespace Model
 
             else if(option == 3)
             {
-                int row;
-                int col;
-                while (true)
-                {
-                    row = rng.Next(mdMaze.GetLength(0) - 1);
-                    col = rng.Next(mdMaze.GetLength(1) - 1);
-                    
-                    if (row % 2 == 0) row++;
-                    if (col % 2 == 0) col++;
-                    
-                    if (IsValidPos(jaggedMaze, row, col))
-                    {
-                        jaggedMaze[row][col] = 0;
-                        mdMaze[row, col] = 0;
-                        break;
-                    }
-                }
-
-                for (int r = 1; r < rows; r += 2)
+                for (int r = 1; r < rows; r += 2) //altijd 2 omdat je dan naar volgende kamer gaat en muur overslaat
                 {
                     for (int c = 1; c < cols; c += 2)
                     {                        
@@ -256,7 +238,7 @@ namespace Model
                         {
                             int[] chosenDirection = directions[rng.Next(directions.Count)];
                             jaggedMaze[r + chosenDirection[0]][c + chosenDirection[1]] = 0; //breekt muur open
-                            jaggedMaze[r + chosenDirection[0] * 2][c + chosenDirection[1] * 2] = 0; //breekt volgende kamer open
+                            jaggedMaze[r + chosenDirection[0] * 2][c + chosenDirection[1] * 2] = 0; //maakt volgende kamer open
                         }
                     }
                 }
