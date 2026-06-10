@@ -37,7 +37,7 @@ namespace Model
                 }
                 ToVisitPositions.Remove(currentPos);
 
-                if(currentPos == maze.End) break;
+                if(currentPos[0] == maze.End[0] && currentPos[1] == maze.End[1]) break;
 
                 foreach(int[] move in maze.moves)
                 {
@@ -67,6 +67,7 @@ namespace Model
                 current = new int[] { parent.row, parent.col };
             }
             
+            route.Add(current);
             route.Reverse();
             foreach(int[] place in route)
             {

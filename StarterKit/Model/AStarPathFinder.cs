@@ -69,6 +69,7 @@ namespace Model
                 current = new int[] { parent.row, parent.col };
             }
             
+            route.Add(current);
             route.Reverse();
             foreach(int[] place in route)
             {

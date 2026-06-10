@@ -36,7 +36,7 @@ namespace Model
 
         int ChooseOption()
         {
-            Console.WriteLine("Choose between (put the number): \n1.Depth-First Search\n2.Breadth-First Search\n3.Binary Tree");
+            Console.WriteLine("Choose between (put the number): \n1.Depth-First\n2.Breadth-First\n3.Binary Tree");
             string? input;
             int choice;
             do
