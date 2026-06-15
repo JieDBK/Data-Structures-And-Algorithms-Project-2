@@ -411,7 +411,8 @@ namespace View
             // header
             Console.ForegroundColor = ConsoleColor.DarkRed;
             string headerText = $"  {algType}  exploredCells:{shownPositions.Count}  correctPath 🔴 :{correctPath?.Count ?? 0}  shortestPath 🟢 :{shortestPath?.Count ?? 0}  ";
-            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - headerText.Length / 3))}{headerText}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - headerText.Length / 3))}");
+            int padding = Math.Max(0, maze.MazeMDArray.GetLength(1) / 2 - headerText.Length / 3);
+            Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", padding))}{headerText}{String.Concat(Enumerable.Repeat("🟨", padding))}");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.BackgroundColor = ConsoleColor.White;
             Console.WriteLine();
