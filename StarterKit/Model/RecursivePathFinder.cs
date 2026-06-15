@@ -37,11 +37,11 @@ namespace Model
             visited[pos[0], pos[1]] = true; //mark pos visited
             visitedPositions.Enqueue(pos);
 
-            int[][] localMoves = (int[][])maze.moves.Clone();
-            rng.Shuffle(localMoves);
-
-            foreach (int[] move in localMoves)
+            int startIdx = rng.Next(4);
+            for (int i = 0; i < 4; i++)
             {
+                int[] move = maze.moves[(startIdx + i) % 4];
+                // try move
                 int newRow = pos[0] + move[0];
                 int newCol = pos[1] + move[1];
 
@@ -54,6 +54,7 @@ namespace Model
                     return true;
                 }
             }
+
 
             visited[pos[0], pos[1]] = false;
             return false;
