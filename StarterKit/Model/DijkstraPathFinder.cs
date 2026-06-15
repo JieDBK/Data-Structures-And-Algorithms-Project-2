@@ -21,23 +21,13 @@ namespace Model
 
             distance[pos[0], pos[1]] = 0;
             Dictionary<(int, int), (int, int)> Parents = new();
-            List<int[]> ToVisitPositions = [];
-            ToVisitPositions.Add(pos);
+            PriorityQueue<int[], int> ToVisitPositions = new();
+            ToVisitPositions.Enqueue(pos, 0);
 
             while (ToVisitPositions.Count > 0)
             {
-                int[] currentPos = { -1, -1 };
-                int smallestDistance = int.MaxValue;
+                int[] currentPos = ToVisitPositions.Dequeue();
 
-                foreach (int[] position in ToVisitPositions)
-                {
-                    if (distance[position[0], position[1]] < smallestDistance)
-                    {
-                        currentPos = position;
-                        smallestDistance = distance[position[0], position[1]];
-                    }
-                }
-                ToVisitPositions.Remove(currentPos);
                 visitedPositions.Enqueue(currentPos);
 
                 if (currentPos[0] == maze.End[0] && currentPos[1] == maze.End[1]) break;
@@ -56,7 +46,7 @@ namespace Model
                     {
                         distance[newRow, newCol] = newDistance;
                         Parents[(newRow, newCol)] = (currentPos[0], currentPos[1]); //child/neighbour is de key, parent is de value, want je werkt van eind naar begin  
-                        ToVisitPositions.Add(newPos);
+                        ToVisitPositions.Enqueue(newPos, newDistance); //kleinste distance is de priority
                     }
                 }
             }
