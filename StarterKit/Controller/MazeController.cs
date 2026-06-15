@@ -122,6 +122,7 @@ namespace Controller
                 bool success = visitedPositions.ToList().Last()[0] == _maze.End[0] && visitedPositions.ToList().Last()[1] == _maze.End[1];
                 string msg = $"\n\n{String.Join("", Enumerable.Repeat(" ", _maze.MazeMDArray.GetLength(1) / 6))}";
                 //_view.DisplayMaze(_maze, symbols, _timeInterval, visitedPositions);
+                Console.Clear();
                 _view.DisplayMaze(_maze, symbols, _timeInterval, visitedPositions, _pathFinder.algType, correctPath, shortestPath);
                 _view.DisplaySuccess(success, msg, _timeInterval);
 

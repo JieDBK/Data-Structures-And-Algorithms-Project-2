@@ -314,11 +314,14 @@ namespace View
             var toBeShownPositions = new Queue<int[]>(visitedPositions);
             var shownPositions = new Queue<int[]>();
 
+            Console.CursorVisible = false;
+            int startTop = 0; // since we just cleared
+
             while (toBeShownPositions.Count > 0)
             {
                 Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.BackgroundColor = ConsoleColor.White;
-                Console.Clear();
+                Console.SetCursorPosition(0, startTop);
 
                 var currPos = toBeShownPositions.Dequeue();
                 shownPositions.Enqueue(currPos);
@@ -403,9 +406,9 @@ namespace View
                 //Console.Clear();
             }
 
-            Console.Clear();
+            Console.CursorVisible = true;
+            Console.SetCursorPosition(0, startTop);
             // header
-            Console.Clear();
             Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"\n\n{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}{"  " + algType + "  "}{String.Concat(Enumerable.Repeat("🟨", maze.MazeMDArray.GetLength(1) / 2 - algType.ToString().Length / 3))}");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
