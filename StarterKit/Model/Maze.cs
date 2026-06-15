@@ -11,25 +11,26 @@ namespace Model
         public int[] Begin { get; private set; }
         public int[] End { get; private set; }
 
-        public readonly int[][] moves = {           
+        public readonly int[][] moves = {
             new int[] {  1,  0 },  //down
             new int[] { -1,  0 },  //up
             new int[] {  0, -1 },  //left
             new int[] {  0,  1 },  //right
         };
-        
-        private int[][] movesGen = {           
+
+        private int[][] movesGen = {
             new int[] {  1,  0 },  //down
             new int[] { -1,  0 },  //up
             new int[] {  0, -1 },  //left
             new int[] {  0,  1 },  //right
         }; //for generating maze and im gonna randomize the list
         public Maze() => GenerateMaze();
-        public Maze(bool automatic = true) {if(automatic) GenerateMaze(); else GenerateFromText(MazeGrids.mazeText);}
-        public Maze(int rows, int cols) {if(rows <= 0 && cols <= 0) GenerateFromText(MazeGrids.mazeText); else GenerateMaze(rows, cols);}
+        public Maze(bool automatic = true) { if (automatic) GenerateMaze(); else GenerateFromText(MazeGrids.mazeText); }
+        public Maze(int rows, int cols) { if (rows <= 0 && cols <= 0) GenerateFromText(MazeGrids.mazeText); else GenerateMaze(rows, cols); }
         public Maze(string lines) => GenerateFromText(lines);
 
-        void GenerateFromText(string lines){
+        void GenerateFromText(string lines)
+        {
             MazeArray = ToMazeArray(lines);
             MazeMDArray = ToMazeMDArray(lines);
         }
@@ -42,17 +43,17 @@ namespace Model
             do
             {
                 input = Console.ReadLine();
-            }while(!int.TryParse(input, out choice) || choice < 1 || choice > 3);
+            } while (!int.TryParse(input, out choice) || choice < 1 || choice > 3);
             return choice;
         }
-        
+
         void GenerateMaze(int rows = 30, int cols = 40)
         {
             int option = ChooseOption();
 
-            if(rows < 4 || cols < 4) {rows = 20; cols = 40;}
-            if(rows % 2 != 0) {rows++;}
-            if(cols % 2 != 0) {cols++;}
+            if (rows < 4 || cols < 4) { rows = 20; cols = 40; }
+            if (rows % 2 != 0) { rows++; }
+            if (cols % 2 != 0) { cols++; }
 
             //ToDo...
 
@@ -67,16 +68,16 @@ namespace Model
                 }
             }
 
-            int[,] mdMaze = new int[rows,cols];
+            int[,] mdMaze = new int[rows, cols];
             for (int i = 0; i < mdMaze.GetLength(0); i++)
             {
                 for (int j = 0; j < mdMaze.GetLength(1); j++)
                 {
-                    mdMaze[i,j] = -1;
+                    mdMaze[i, j] = -1;
                 }
             }
 
-            if(option == 1)
+            if (option == 1)
             {
                 Stack<int[]> backtrack = new();
                 int row;
@@ -115,7 +116,7 @@ namespace Model
                         int betweenRow = currentRow + step[0];
                         int betweenCol = currentCol + step[1];
                         // if (step[0] == -1)
-                        if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
+                        if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
                         {
                             backtrack.Push(currentCell);
                             jaggedMaze[newRow][newCol] = 0;
@@ -127,7 +128,7 @@ namespace Model
                             {
                                 int extraRow = betweenRow + step[1]; //ipv 180 graden blokje weghalen, doe je 90 graden en daarom zet je step[1] bij row ipv col, anders kom je gewoon op newCol of newRow terecht
                                 int extraCol = betweenCol + step[0];
-                                if (IsValidPos(jaggedMaze, extraRow, extraCol) && 
+                                if (IsValidPos(jaggedMaze, extraRow, extraCol) &&
                                 extraRow > 0 && extraRow < rows - 1 &&
                                 extraCol > 0 && extraCol < cols - 1 &&
                                 jaggedMaze[extraRow][extraCol] == -1)
@@ -141,9 +142,9 @@ namespace Model
                             break;
                         }
                     }
-                }                
+                }
             }
-            else if(option == 2)
+            else if (option == 2)
             {
                 Queue<int[]> neighbours = new();
                 bool[,] visited = new bool[rows, cols];
@@ -187,7 +188,7 @@ namespace Model
                         int newCol = currentCol + (step[1] * 2);
                         int betweenRow = currentRow + step[0];
                         int betweenCol = currentCol + step[1];
-                        if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1 ) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
+                        if (IsValidPos(jaggedMaze, newRow, newCol) && jaggedMaze[newRow][newCol] == -1) // && IsValidPos(jaggedMaze, newRow + step[0], newCol + step[1]) && jaggedMaze[newRow + step[0]][newCol + step[1]] == -1
                         {
                             jaggedMaze[newRow][newCol] = 0;
                             mdMaze[newRow, newCol] = 0;
@@ -198,7 +199,7 @@ namespace Model
                             {
                                 int extraRow = betweenRow + step[1];
                                 int extraCol = betweenCol + step[0];
-                                if (IsValidPos(jaggedMaze, extraRow, extraCol) && 
+                                if (IsValidPos(jaggedMaze, extraRow, extraCol) &&
                                 extraRow > 0 && extraRow < rows - 1 &&
                                 extraCol > 0 && extraCol < cols - 1 &&
                                 jaggedMaze[extraRow][extraCol] == -1)
@@ -209,22 +210,22 @@ namespace Model
                             }
 
                             neighbours.Enqueue([newRow, newCol]);
-                        }                        
+                        }
                     }
-                }             
+                }
             }
 
-            else if(option == 3)
+            else if (option == 3)
             {
                 for (int r = 1; r < rows; r += 2) //altijd 2 omdat je dan naar volgende kamer gaat en muur overslaat
                 {
                     for (int c = 1; c < cols; c += 2)
-                    {                        
+                    {
                         jaggedMaze[r][c] = 0;
 
-                        List<int[]> directions = new ();
+                        List<int[]> directions = new();
                         int[][] movesBinary = { moves[0], moves[3] };
-                        
+
                         foreach (int[] step in movesBinary) //check of volgende kamer binnen het grid valt
                         {
                             int newRow = r + step[0] * 2;
@@ -242,7 +243,7 @@ namespace Model
                         }
                     }
                 }
-            
+
                 for (int i = 0; i < rows; i++)
                 {
                     for (int j = 0; j < cols; j++)
@@ -257,8 +258,8 @@ namespace Model
                 if (jaggedMaze[1][i] == 0)
                 {
                     jaggedMaze[1][i] = 1;
-                    mdMaze[1,i] = 1;
-                    Begin = [1,i];
+                    mdMaze[1, i] = 1;
+                    Begin = [1, i];
                     break;
                 }
             }
@@ -269,8 +270,8 @@ namespace Model
                 if (jaggedMaze[rows - 1][cols - i] == 0)
                 {
                     jaggedMaze[rows - 1][cols - i] = 2;
-                    mdMaze[rows -1, cols - i] = 2;
-                    End = [rows -1, cols - i];
+                    mdMaze[rows - 1, cols - i] = 2;
+                    End = [rows - 1, cols - i];
                     break;
                 }
             }
@@ -281,17 +282,17 @@ namespace Model
 
             MazeArray = jaggedMaze;
             MazeMDArray = mdMaze;
-            
+
             // Begin = [1,1];
             // End = [rows -2, cols - 2];
-            
+
         }
-        
-        
+
+
 
         void GenerateMazeBFS(int rows = 40, int cols = 40)
         {
-            
+
         }
         int[][] ToMazeArray(string maze)
         {
@@ -332,7 +333,7 @@ namespace Model
             }
 
             return outArray;
-            
+
         }
 
         int[,] ToMazeMDArray(string maze)
@@ -345,15 +346,15 @@ namespace Model
             if (arrayLines != null && arrayLines.Length > 0)
                 lineLength = arrayLines[0].Length;
             else
-            throw new Exception($"Maze incorrect");
-            
+                throw new Exception($"Maze incorrect");
+
             for (var rowIdx = 0; arrayLines != null && rowIdx < arrayLines.Length; rowIdx++)
             {
                 var line = arrayLines[rowIdx];
                 if (arrayLines[rowIdx] == null || line.Length != lineLength)
                     throw new Exception($"Not same line length for rows in maze:\n at row 0: {lineLength}, at row {rowIdx}: {line.Length}");
             }
-            
+
             int[,] outArray = new int[arrayLines.Length, lineLength];
 
             for (var rowIdx = 0; rowIdx < arrayLines.Length; rowIdx++)
@@ -418,10 +419,10 @@ namespace Model
                     && !(newRow >= array.Length)
                     && !(newColumn >= array[newRow].Length);
         }
-        
+
         // Make sure the position is within the maze array bounds.
         // no walls
-        public bool IsValidMove(int newRow, int newColumn) => 
+        public bool IsValidMove(int newRow, int newColumn) =>
             IsValidPos(MazeArray, newRow, newColumn) &&
             !(MazeArray[newRow][newColumn] == -1); //no walls 
 
@@ -437,12 +438,12 @@ namespace Model
                     IsValidPos(MazeArray, newRow, newColumn) &&
                     !(MazeArray[newRow][newColumn] == -1 || MazeArray[newRow][newColumn] == 4); //no walls, not yet visited 
         }
-        
+
     }
 
     public static class MazeGrids
     {
-      public static string mazeText = @"
+        public static string mazeText = @"
 xxxxxx1xxxxxxxxxxxxxxxxxxxxxxx.
  x   x   x                    .
 xx2x xxx   x xxxxxxxx    x xx .
