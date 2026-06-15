@@ -266,11 +266,11 @@ namespace Model
 
             for (int i = 1; i < cols; i++)
             {
-                if (jaggedMaze[rows - i][cols - i] == 0)
+                if (jaggedMaze[rows - 1][cols - i] == 0)
                 {
-                    jaggedMaze[rows - i][cols - i] = 2;
-                    mdMaze[rows -i, cols - i] = 2;
-                    End = [rows -i, cols - i];
+                    jaggedMaze[rows - 1][cols - i] = 2;
+                    mdMaze[rows -1, cols - i] = 2;
+                    End = [rows -1, cols - i];
                     break;
                 }
             }
