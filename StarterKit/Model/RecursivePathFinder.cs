@@ -56,7 +56,7 @@ namespace Model
             }
 
 
-            visited[pos[0], pos[1]] = false;
+            // visited[pos[0], pos[1]] = false;
             return false;
         }
     }
